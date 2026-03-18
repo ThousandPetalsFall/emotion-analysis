@@ -1,7 +1,7 @@
 {
   "name": "emotion-analysis",
-  "version": "1.0.0",
-  "description": "情绪分析小程序 - AI 驱动的情绪识别与分析",
+  "version": "2.0.0",
+  "description": "不良情绪分析小程序 - 通过问答引导帮助用户探索情绪背后的真实原因",
   "main": "main.js",
   "scripts": {
     "dev:mp-weixin": "uni -p mp-weixin",

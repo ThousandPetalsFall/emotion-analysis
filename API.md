@@ -1,8 +1,8 @@
-# 情绪分析 API 文档
+# 不良情绪分析 API 文档
 
 ## 概述
 
-情绪分析 API 提供基于 AI 的图片情绪识别服务，支持 6 种基本情绪的识别和分析。
+不良情绪分析 API 提供问答引导式情绪探索服务，通过决策树式问题帮助用户自我觉察。
 
 **基础路径**: `/api/emotion-analysis`
 
@@ -12,19 +12,62 @@
 
 ## 接口列表
 
-### 1. 分析图片情绪
+### 1. 保存分析记录
 
 **POST** `/api/emotion-analysis/analyze`
 
-分析上传图片中的情绪状态。
+保存用户的情绪探索记录和生成的报告。
 
 #### 请求参数
 
-**Content-Type**: `multipart/form-data`
+**Content-Type**: `application/json`
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| file | File | 是 | 图片文件，支持 JPG/PNG 格式 |
+| answers | array | 是 | 用户答案数组 |
+| recordTypes | array | 是 | 记录的情绪类型 |
+| report | object | 是 | 生成的报告对象 |
+
+#### 请求示例
+
+```json
+{
+  "answers": [
+    {
+      "questionId": "Q1",
+      "question": "你是否会说自己好累？",
+      "answer": "②经常"
+    },
+    {
+      "questionId": "Q1-1",
+      "question": "你是否有身体上的劳累？",
+      "answer": "③有时",
+      "branch": "fatigue"
+    },
+    {
+      "question": "你一直在忙，是真的必须忙，还是不敢停下来？",
+      "answer": "②不敢停",
+      "type": "ultimate"
+    },
+    {
+      "question": "如果停下来，你害怕面对什么？",
+      "answer": "害怕面对内心的空虚",
+      "type": "input"
+    }
+  ],
+  "recordTypes": ["身体疲劳", "精神疲劳"],
+  "report": {
+    "title": "情绪日记 · 自我觉察",
+    "timestamp": "2026-03-18 12:00:00",
+    "summaries": [
+      "你在用忙碌填满生活，却忘了问自己为什么而忙",
+      "停下来不是偷懒，是给内心一个说话的机会"
+    ],
+    "guidingQuestion": "如果今天必须什么都不做，你会怎么和自己相处？",
+    "footer": "允许一切发生，包括自己的情绪"
+  }
+}
+```
 
 #### 响应示例
 
@@ -32,26 +75,11 @@
 
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-03-18T10:30:00.000Z",
-  "emotion": "开心",
-  "emotion_key": "happy",
-  "emotion_icon": "😊",
-  "emotions": {
-    "happy": 0.6523,
-    "calm": 0.1842,
-    "neutral": 0.0891,
-    "sad": 0.0412,
-    "anxious": 0.0234,
-    "angry": 0.0098
-  },
-  "analysis": "从图片中检测到积极向上的情绪能量，画面传递出快乐和满足感。这种情绪状态有助于提升创造力和人际关系。",
-  "suggestions": [
-    "继续保持积极的心态，把这份快乐传递给身边的人",
-    "记录下此刻的美好感受，日后回顾会更有力量",
-    "趁着好心情，完成一些有挑战性的任务吧"
-  ],
-  "confidence": 0.6523
+  "success": true,
+  "data": {
+    "id": 1,
+    "createdAt": "2026-03-18T12:00:00+08:00"
+  }
 }
 ```
 
@@ -59,25 +87,8 @@
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| id | string | 分析记录唯一 ID |
-| timestamp | string | 分析时间（ISO 8601 格式） |
-| emotion | string | 主情绪中文名称 |
-| emotion_key | string | 主情绪英文标识 |
-| emotion_icon | string | 情绪对应 emoji 图标 |
-| emotions | object | 6 种情绪的置信度分布 |
-| analysis | string | AI 生成的情绪分析文本 |
-| suggestions | array | 建议列表（字符串数组） |
-| confidence | number | 主情绪的置信度（0-1） |
-
-#### 错误响应
-
-**状态码**: `500 Internal Server Error`
-
-```json
-{
-  "detail": "分析失败：错误描述信息"
-}
-```
+| id | integer | 分析记录 ID |
+| createdAt | string | 创建时间（ISO 8601 格式） |
 
 ---
 
@@ -100,27 +111,26 @@
 
 ```json
 {
-  "total": 156,
-  "page": 1,
-  "page_size": 20,
-  "data": [
-    {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
-      "timestamp": "2026-03-18T10:30:00.000Z",
-      "emotion": "开心",
-      "emotion_key": "happy",
-      "emotion_icon": "😊",
-      "confidence": 0.6523
-    },
-    {
-      "id": "660e8400-e29b-41d4-a716-446655440001",
-      "timestamp": "2026-03-17T15:20:00.000Z",
-      "emotion": "平静",
-      "emotion_key": "calm",
-      "emotion_icon": "😌",
-      "confidence": 0.7234
-    }
-  ]
+  "success": true,
+  "data": {
+    "total": 10,
+    "page": 1,
+    "pageSize": 20,
+    "list": [
+      {
+        "id": 1,
+        "recordTypes": ["身体疲劳", "精神疲劳"],
+        "reportTitle": "情绪日记 · 自我觉察",
+        "createdAt": "2026-03-18T12:00:00+08:00"
+      },
+      {
+        "id": 2,
+        "recordTypes": ["预期焦虑"],
+        "reportTitle": "内心探索 · 今日记录",
+        "createdAt": "2026-03-17T15:30:00+08:00"
+      }
+    ]
+  }
 }
 ```
 
@@ -128,7 +138,7 @@
 
 ### 3. 获取分析详情
 
-**GET** `/api/emotion-analysis/history/{analysis_id}`
+**GET** `/api/emotion-analysis/history/{id}`
 
 获取指定分析记录的详细信息。
 
@@ -136,7 +146,7 @@
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
-| analysis_id | string | 分析记录 ID |
+| id | integer | 分析记录 ID |
 
 #### 响应示例
 
@@ -144,27 +154,34 @@
 
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-03-18T10:30:00.000Z",
-  "emotion": "开心",
-  "emotion_key": "happy",
-  "emotion_icon": "😊",
-  "emotions": {
-    "happy": 0.6523,
-    "calm": 0.1842,
-    "neutral": 0.0891,
-    "sad": 0.0412,
-    "anxious": 0.0234,
-    "angry": 0.0098
-  },
-  "analysis": "从图片中检测到积极向上的情绪能量，画面传递出快乐和满足感。这种情绪状态有助于提升创造力和人际关系。",
-  "suggestions": [
-    "继续保持积极的心态，把这份快乐传递给身边的人",
-    "记录下此刻的美好感受，日后回顾会更有力量",
-    "趁着好心情，完成一些有挑战性的任务吧"
-  ],
-  "confidence": 0.6523,
-  "image_url": "https://example.com/uploads/550e8400.jpg"
+  "success": true,
+  "data": {
+    "id": 1,
+    "answers": [
+      {
+        "questionId": "Q1",
+        "question": "你是否会说自己好累？",
+        "answer": "②经常"
+      },
+      {
+        "questionId": "Q1-1",
+        "question": "你是否有身体上的劳累？",
+        "answer": "③有时",
+        "branch": "fatigue"
+      }
+    ],
+    "recordTypes": ["身体疲劳", "精神疲劳"],
+    "report": {
+      "title": "情绪日记 · 自我觉察",
+      "timestamp": "2026-03-18 12:00:00",
+      "summaries": [
+        "你在用忙碌填满生活，却忘了问自己为什么而忙"
+      ],
+      "guidingQuestion": "如果今天必须什么都不做，你会怎么和自己相处？",
+      "footer": "允许一切发生，包括自己的情绪"
+    },
+    "createdAt": "2026-03-18T12:00:00+08:00"
+  }
 }
 ```
 
@@ -174,7 +191,8 @@
 
 ```json
 {
-  "detail": "记录不存在"
+  "success": false,
+  "error": "记录不存在"
 }
 ```
 
@@ -182,7 +200,7 @@
 
 ### 4. 删除分析记录
 
-**DELETE** `/api/emotion-analysis/history/{analysis_id}`
+**DELETE** `/api/emotion-analysis/history/{id}`
 
 删除指定的分析记录。
 
@@ -190,7 +208,7 @@
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
-| analysis_id | string | 分析记录 ID |
+| id | integer | 分析记录 ID |
 
 #### 响应示例
 
@@ -198,57 +216,153 @@
 
 ```json
 {
+  "success": true,
   "message": "删除成功"
 }
 ```
 
 ---
 
-## 情绪类型参考
+### 5. 批量删除记录
 
-| emotion_key | emotion (中文) | icon | 说明 |
-|-------------|----------------|------|------|
-| happy | 开心 | 😊 | 积极、愉悦、满足 |
-| sad | 悲伤 | 😢 | 难过、失落、沮丧 |
-| angry | 愤怒 | 😠 | 生气、不满、愤怒 |
-| anxious | 焦虑 | 😰 | 紧张、担忧、不安 |
-| calm | 平静 | 😌 | 安宁、平和、放松 |
-| neutral | 中性 | 😐 | 平稳、无明显情绪 |
+**POST** `/api/emotion-analysis/history/batch-delete`
+
+批量删除指定的分析记录。
+
+#### 请求参数
+
+**Content-Type**: `application/json`
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| ids | array | 是 | 要删除的记录 ID 数组 |
+
+#### 请求示例
+
+```json
+{
+  "ids": [1, 2, 3]
+}
+```
+
+#### 响应示例
+
+**状态码**: `200 OK`
+
+```json
+{
+  "success": true,
+  "message": "已删除 3 条记录"
+}
+```
+
+---
+
+## 数据模型
+
+### Answer (答案对象)
+
+```json
+{
+  "questionId": "Q1",        // 问题 ID（筛查题和分支题有，灵魂拷问无）
+  "question": "问题文本",
+  "answer": "用户答案",
+  "optionIndex": 1,          // 选项索引（选择题）
+  "branch": "fatigue",       // 所属分支
+  "type": "ultimate"         // 问题类型：ultimate/input/supplementary
+}
+```
+
+### Report (报告对象)
+
+```json
+{
+  "title": "情绪日记 · 自我觉察",
+  "timestamp": "2026-03-18 12:00:00",
+  "summaries": ["摘要 1", "摘要 2"],
+  "guidingQuestion": "引导问题",
+  "recordTypes": ["身体疲劳", "精神疲劳"],
+  "footer": "底部文案"
+}
+```
+
+### AnalysisRecord (分析记录)
+
+```json
+{
+  "id": 1,
+  "answers": [...],
+  "recordTypes": ["身体疲劳", "精神疲劳"],
+  "report": {...},
+  "createdAt": "2026-03-18T12:00:00+08:00"
+}
+```
+
+---
+
+## 情绪分支参考
+
+| 分支 ID | 分支名称 | 触发问题 |
+|--------|----------|----------|
+| fatigue | 疲劳分支 | 你是否会说自己好累？ |
+| anxiety | 焦虑分支 | 你是否感到焦虑或紧张？ |
+| loneliness | 孤独分支 | 你是否感到孤独或不被理解？ |
+| confusion | 迷茫分支 | 你是否对生活感到迷茫或缺乏方向？ |
+| anger | 愤怒分支 | 你是否感到愤怒或烦躁？ |
+| sadness | 悲伤分支 | 你是否感到悲伤或低落？ |
+| unclear | 说不清分支 | 以上都不是，但就是心情不好？ |
+
+---
+
+## 记录类型参考
+
+| 分支 | 记录类型 |
+|------|----------|
+| 疲劳 | 身体疲劳、精神疲劳、情绪疲劳、意义疲劳 |
+| 焦虑 | 预期焦虑、反刍思维、现实压力、躯体化焦虑 |
+| 孤独 | 物理孤独、情感孤独、存在孤独 |
+| 迷茫 | 目标缺失、路径迷茫、意义危机 |
+| 愤怒 | 自我愤怒、人际愤怒、系统愤怒、压抑愤怒 |
+| 悲伤 | 丧失悲伤、需求缺失、习得性无助 |
+| 说不清 | 生理节律、环境适应、直觉信号、周期性情绪 |
+
+---
 
 ## 使用示例
 
 ### cURL 示例
 
 ```bash
-# 分析图片
+# 保存分析记录
 curl -X POST "http://localhost:8000/api/emotion-analysis/analyze" \
-  -F "file=@/path/to/your/image.jpg"
+  -H "Content-Type: application/json" \
+  -d '{
+    "answers": [...],
+    "recordTypes": ["身体疲劳"],
+    "report": {...}
+  }'
 
 # 获取历史记录
 curl "http://localhost:8000/api/emotion-analysis/history?page=1&page_size=10"
 
 # 获取详情
-curl "http://localhost:8000/api/emotion-analysis/history/550e8400-e29b-41d4-a716-446655440000"
+curl "http://localhost:8000/api/emotion-analysis/history/1"
 
 # 删除记录
-curl -X DELETE "http://localhost:8000/api/emotion-analysis/history/550e8400-e29b-41d4-a716-446655440000"
+curl -X DELETE "http://localhost:8000/api/emotion-analysis/history/1"
 ```
 
 ### JavaScript 示例
 
 ```javascript
-// 分析图片
-async function analyzeImage(filePath) {
-  const formData = new FormData();
-  formData.append('file', filePath);
-
+// 保存分析记录
+async function saveAnalysis(answers, recordTypes, report) {
   const response = await fetch('/api/emotion-analysis/analyze', {
     method: 'POST',
-    body: formData
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ answers, recordTypes, report })
   });
-
-  const result = await response.json();
-  console.log('分析结果:', result);
+  return await response.json();
 }
 
 // 获取历史记录
@@ -258,6 +372,20 @@ async function getHistory(page = 1, pageSize = 20) {
   );
   return await response.json();
 }
+
+// 获取详情
+async function getRecordDetail(id) {
+  const response = await fetch(`/api/emotion-analysis/history/${id}`);
+  return await response.json();
+}
+
+// 删除记录
+async function deleteRecord(id) {
+  const response = await fetch(`/api/emotion-analysis/history/${id}`, {
+    method: 'DELETE'
+  });
+  return await response.json();
+}
 ```
 
 ### Python 示例
@@ -265,14 +393,17 @@ async function getHistory(page = 1, pageSize = 20) {
 ```python
 import requests
 
-# 分析图片
-def analyze_image(image_path):
-    with open(image_path, 'rb') as f:
-        files = {'file': f}
-        response = requests.post(
-            'http://localhost:8000/api/emotion-analysis/analyze',
-            files=files
-        )
+# 保存分析记录
+def save_analysis(answers, record_types, report):
+    data = {
+        'answers': answers,
+        'recordTypes': record_types,
+        'report': report
+    }
+    response = requests.post(
+        'http://localhost:8000/api/emotion-analysis/analyze',
+        json=data
+    )
     return response.json()
 
 # 获取历史记录
@@ -284,27 +415,35 @@ def get_history(page=1, page_size=20):
     return response.json()
 
 # 删除记录
-def delete_record(analysis_id):
+def delete_record(record_id):
     response = requests.delete(
-        f'http://localhost:8000/api/emotion-analysis/history/{analysis_id}'
+        f'http://localhost:8000/api/emotion-analysis/history/{record_id}'
     )
     return response.json()
 ```
 
+---
+
 ## 注意事项
 
-1. **图片格式**: 支持 JPG、PNG 格式，建议大小不超过 5MB
-2. **请求频率**: 建议控制请求频率，避免短时间内大量请求
-3. **隐私保护**: 上传的图片仅用于分析，不会被保存或用于其他用途
-4. **结果参考**: AI 分析结果仅供参考，不作为专业心理诊断依据
+1. **数据隐私**: 所有记录默认本地存储，后端存储需用户授权
+2. **数据导出**: 支持导出所有历史记录为 JSON 格式
+3. **数据删除**: 支持单条删除和批量删除
+4. **结果参考**: 分析结果仅供参考，不作为专业心理诊断依据
+
+---
 
 ## 更新日志
 
-### v1.0.0 (2026-03-18)
+### v2.0.0 (2026-03-18)
+- 重构为问答引导式情绪分析 API
+- 新增决策树数据结构
+- 新增报告生成接口
+- 新增批量删除功能
+
+### v1.0.0
 - 初始版本发布
-- 支持 6 种基本情绪识别
-- 提供个性化建议
-- 历史记录管理
+- 图片情绪分析接口
 
 ---
 
