@@ -519,35 +519,106 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// ============ Ins 风暖色调色板 ============
+// 珊瑚粉：#FF6B6B
+// 奶油色：#FFF5E4
+// 玫瑰金：#FFD7D7
+// 暖橙色：#FFA07A
+// 柔和桃：#FFB6C1
+// 浅杏色：#FFE4C4
+
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FFF5E4 0%, #FFE4C4 50%, #FFD7D7 100%);
   padding: 40rpx;
+  position: relative;
+  overflow: hidden;
+
+  // 添加柔和的光晕背景
+  &::before {
+    content: '';
+    position: absolute;
+    top: -200rpx;
+    right: -200rpx;
+    width: 600rpx;
+    height: 600rpx;
+    background: radial-gradient(circle, rgba(255, 107, 107, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: breathe 8s ease-in-out infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -150rpx;
+    left: -150rpx;
+    width: 400rpx;
+    height: 400rpx;
+    background: radial-gradient(circle, rgba(255, 160, 122, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: breathe 10s ease-in-out infinite reverse;
+  }
+}
+
+// 呼吸动画
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+// 淡入动画
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // 欢迎页面
 .welcome-page {
   text-align: center;
   padding-top: 100rpx;
+  animation: fadeInUp 0.6s ease-out;
+  position: relative;
+  z-index: 1;
 
   .title {
-    font-size: 48rpx;
+    font-size: 52rpx;
     font-weight: bold;
-    color: #fff;
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 20rpx;
+    letter-spacing: 2rpx;
   }
 
   .subtitle {
     font-size: 32rpx;
-    color: rgba(255, 255, 255, 0.9);
+    color: #8B7355;
     margin-bottom: 60rpx;
+    font-weight: 300;
   }
 
   .description {
     font-size: 28rpx;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.8;
+    color: #A08060;
+    line-height: 2;
     margin-bottom: 80rpx;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 30rpx;
+    border-radius: 20rpx;
+    backdrop-filter: blur(10rpx);
   }
 
   .stats {
@@ -564,88 +635,119 @@ export default {
       .stat-num {
         font-size: 56rpx;
         font-weight: bold;
-        color: #fff;
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .stat-label {
         font-size: 24rpx;
-        color: rgba(255, 255, 255, 0.7);
+        color: #A08060;
         margin-top: 10rpx;
       }
     }
   }
 
   .start-btn {
-    background: #fff;
-    color: #667eea;
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+    color: #fff;
     font-size: 32rpx;
     font-weight: bold;
-    padding: 30rpx 100rpx;
+    padding: 35rpx 120rpx;
     border-radius: 50rpx;
     border: none;
     margin-bottom: 40rpx;
+    box-shadow: 0 10rpx 40rpx rgba(255, 107, 107, 0.4);
+    transition: all 0.3s ease;
+    animation: pulse 2s ease-in-out infinite;
+
+    &:active {
+      transform: scale(0.95);
+    }
   }
 
   .note {
     font-size: 24rpx;
-    color: rgba(255, 255, 255, 0.6);
+    color: #B8A080;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 10rpx 40rpx rgba(255, 107, 107, 0.4);
+  }
+  50% {
+    box-shadow: 0 15rpx 50rpx rgba(255, 107, 107, 0.6);
   }
 }
 
 // 问题页面
 .question-page {
+  position: relative;
+  z-index: 1;
+
   .progress-bar {
     width: 100%;
-    height: 8rpx;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4rpx;
+    height: 10rpx;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5rpx;
     overflow: hidden;
     margin-bottom: 20rpx;
+    box-shadow: 0 2rpx 10rpx rgba(255, 107, 107, 0.1);
 
     .progress {
       height: 100%;
-      background: #fff;
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #FF6B6B 0%, #FFA07A 100%);
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 5rpx;
     }
   }
 
   .step-indicator {
     font-size: 24rpx;
-    color: rgba(255, 255, 255, 0.7);
+    color: #A08060;
     text-align: center;
     margin-bottom: 40rpx;
+    font-weight: 300;
   }
 
   .branch-tag {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
     color: #fff;
     font-size: 24rpx;
     padding: 10rpx 30rpx;
     border-radius: 20rpx;
     margin-bottom: 20rpx;
+    box-shadow: 0 4rpx 15rpx rgba(255, 107, 107, 0.3);
   }
 
   .question-card {
-    background: #fff;
-    border-radius: 20rpx;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 25rpx;
     padding: 50rpx 40rpx;
     margin-bottom: 40rpx;
-    box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.2);
+    box-shadow: 0 15rpx 40rpx rgba(255, 107, 107, 0.15);
+    backdrop-filter: blur(10rpx);
+    animation: fadeInUp 0.5s ease-out;
 
     .question-text {
       font-size: 36rpx;
-      color: #333;
-      line-height: 1.6;
+      color: #4A4A4A;
+      line-height: 1.8;
       text-align: center;
+      font-weight: 500;
     }
 
     &.ultimate {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+      box-shadow: 0 15rpx 40rpx rgba(255, 107, 107, 0.35);
 
       .question-text {
         color: #fff;
         font-weight: bold;
+        font-size: 38rpx;
       }
     }
   }
@@ -658,29 +760,32 @@ export default {
 
     .option-btn {
       background: rgba(255, 255, 255, 0.9);
-      color: #333;
+      color: #4A4A4A;
       font-size: 30rpx;
-      padding: 30rpx 40rpx;
-      border-radius: 15rpx;
+      padding: 35rpx 40rpx;
+      border-radius: 20rpx;
       text-align: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4rpx 15rpx rgba(255, 107, 107, 0.1);
+      border: 2rpx solid transparent;
 
       &.selected {
-        background: #fff;
-        color: #667eea;
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+        color: #fff;
         font-weight: bold;
         transform: scale(1.02);
-        box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8rpx 25rpx rgba(255, 107, 107, 0.3);
+        border-color: rgba(255, 255, 255, 0.3);
       }
 
       &.ultimate {
         background: rgba(255, 255, 255, 0.95);
-        color: #333;
+        color: #4A4A4A;
 
         &.selected {
-          background: #f5576c;
-          color: #fff;
+          background: linear-gradient(135deg, #FFF5E4 0%, #FFE4C4 100%);
+          color: #FF6B6B;
+          border-color: rgba(255, 107, 107, 0.3);
         }
       }
     }
@@ -693,21 +798,30 @@ export default {
 
     .nav-btn {
       flex: 1;
-      background: rgba(255, 255, 255, 0.3);
-      color: #fff;
+      background: rgba(255, 255, 255, 0.5);
+      color: #FF6B6B;
       font-size: 28rpx;
-      padding: 25rpx;
-      border-radius: 15rpx;
-      border: none;
+      padding: 28rpx;
+      border-radius: 20rpx;
+      border: 2rpx solid rgba(255, 107, 107, 0.3);
+      backdrop-filter: blur(10rpx);
+      transition: all 0.3s ease;
 
       &.next {
-        background: #fff;
-        color: #667eea;
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+        color: #fff;
         font-weight: bold;
+        border: none;
+        box-shadow: 0 6rpx 20rpx rgba(255, 107, 107, 0.3);
       }
 
       &:disabled {
         opacity: 0.5;
+        transform: none;
+      }
+
+      &:not(:disabled):active {
+        transform: scale(0.96);
       }
     }
   }
@@ -715,18 +829,24 @@ export default {
 
 // 输入页面
 .input-page {
+  position: relative;
+  z-index: 1;
+
   .question-card {
-    background: #fff;
-    border-radius: 20rpx;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 25rpx;
     padding: 50rpx 40rpx;
     margin-bottom: 40rpx;
-    box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.2);
+    box-shadow: 0 15rpx 40rpx rgba(255, 107, 107, 0.15);
+    backdrop-filter: blur(10rpx);
+    animation: fadeInUp 0.5s ease-out;
 
     .question-text {
       font-size: 36rpx;
-      color: #333;
-      line-height: 1.6;
+      color: #4A4A4A;
+      line-height: 1.8;
       text-align: center;
+      font-weight: 500;
     }
   }
 
@@ -737,15 +857,22 @@ export default {
     border-radius: 20rpx;
     padding: 30rpx;
     font-size: 30rpx;
-    color: #333;
+    color: #4A4A4A;
     margin-bottom: 20rpx;
+    border: 2rpx solid rgba(255, 107, 107, 0.2);
+    box-shadow: 0 4rpx 15rpx rgba(255, 107, 107, 0.1);
+
+    &:focus {
+      border-color: #FF6B6B;
+      box-shadow: 0 4rpx 20rpx rgba(255, 107, 107, 0.2);
+    }
   }
 
   .char-count {
     display: block;
     text-align: right;
     font-size: 24rpx;
-    color: rgba(255, 255, 255, 0.6);
+    color: #B8A080;
     margin-bottom: 60rpx;
   }
 
@@ -756,21 +883,29 @@ export default {
 
     .nav-btn {
       flex: 1;
-      background: rgba(255, 255, 255, 0.3);
-      color: #fff;
+      background: rgba(255, 255, 255, 0.5);
+      color: #FF6B6B;
       font-size: 28rpx;
-      padding: 25rpx;
-      border-radius: 15rpx;
-      border: none;
+      padding: 28rpx;
+      border-radius: 20rpx;
+      border: 2rpx solid rgba(255, 107, 107, 0.3);
+      backdrop-filter: blur(10rpx);
+      transition: all 0.3s ease;
 
       &.next {
-        background: #fff;
-        color: #667eea;
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+        color: #fff;
         font-weight: bold;
+        border: none;
+        box-shadow: 0 6rpx 20rpx rgba(255, 107, 107, 0.3);
       }
 
       &:disabled {
         opacity: 0.5;
+      }
+
+      &:not(:disabled):active {
+        transform: scale(0.96);
       }
     }
   }
@@ -778,15 +913,20 @@ export default {
 
 // 灵魂拷问页面
 .ultimate-page {
+  position: relative;
+  z-index: 1;
+
   .ultimate-tag {
     display: inline-block;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
     color: #fff;
     font-size: 24rpx;
     font-weight: bold;
     padding: 10rpx 30rpx;
     border-radius: 20rpx;
     margin-bottom: 20rpx;
+    box-shadow: 0 4rpx 15rpx rgba(255, 107, 107, 0.3);
+    animation: pulse 3s ease-in-out infinite;
   }
 
   .input-container {
@@ -799,55 +939,77 @@ export default {
       border-radius: 20rpx;
       padding: 30rpx;
       font-size: 30rpx;
-      color: #333;
+      color: #4A4A4A;
       margin-bottom: 20rpx;
+      border: 2rpx solid rgba(255, 107, 107, 0.2);
     }
 
     .char-count {
       display: block;
       text-align: right;
       font-size: 24rpx;
-      color: rgba(255, 255, 255, 0.6);
+      color: #B8A080;
     }
   }
 }
 
 // 补充问题页面
 .supplementary-page {
+  position: relative;
+  z-index: 1;
+
   .step-indicator {
     font-size: 24rpx;
-    color: rgba(255, 255, 255, 0.7);
+    color: #A08060;
     text-align: center;
     margin-bottom: 40rpx;
+    font-weight: 300;
   }
 }
 
 // 报告页面
 .report-page {
+  position: relative;
+  z-index: 1;
+
   .report-card {
-    background: #fff;
-    border-radius: 20rpx;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 25rpx;
     overflow: hidden;
     margin-bottom: 40rpx;
-    box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20rpx 60rpx rgba(255, 107, 107, 0.2);
+    backdrop-filter: blur(20rpx);
+    animation: fadeInUp 0.6s ease-out;
 
     .report-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 40rpx;
+      background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+      padding: 50rpx 40rpx;
       text-align: center;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30rpx;
+        background: radial-gradient(circle at 50% 0, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+      }
 
       .report-title {
         display: block;
-        font-size: 40rpx;
+        font-size: 44rpx;
         font-weight: bold;
         color: #fff;
-        margin-bottom: 10rpx;
+        margin-bottom: 15rpx;
+        letter-spacing: 2rpx;
       }
 
       .report-time {
         display: block;
         font-size: 24rpx;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.9);
       }
     }
 
@@ -861,8 +1023,11 @@ export default {
           display: block;
           font-size: 28rpx;
           font-weight: bold;
-          color: #667eea;
-          margin-bottom: 20rpx;
+          background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 25rpx;
         }
 
         .summary-item {
@@ -871,12 +1036,13 @@ export default {
           .summary-text {
             display: block;
             font-size: 30rpx;
-            color: #333;
-            line-height: 1.6;
-            padding: 20rpx;
-            background: #f8f9fa;
-            border-radius: 10rpx;
-            border-left: 4rpx solid #667eea;
+            color: #4A4A4A;
+            line-height: 1.8;
+            padding: 25rpx;
+            background: linear-gradient(135deg, #FFF5E4 0%, #FFE4C4 100%);
+            border-radius: 15rpx;
+            border-left: 5rpx solid #FF6B6B;
+            box-shadow: 0 4rpx 15rpx rgba(255, 107, 107, 0.1);
           }
         }
       }
@@ -888,20 +1054,24 @@ export default {
           display: block;
           font-size: 28rpx;
           font-weight: bold;
-          color: #764ba2;
-          margin-bottom: 20rpx;
+          background: linear-gradient(135deg, #FFA07A 0%, #FF6B6B 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 25rpx;
         }
 
         .question-text-large {
           display: block;
-          font-size: 34rpx;
-          color: #333;
-          line-height: 1.8;
-          padding: 30rpx;
-          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-          border-radius: 15rpx;
+          font-size: 36rpx;
           color: #fff;
+          line-height: 1.8;
+          padding: 40rpx 30rpx;
+          background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+          border-radius: 20rpx;
           font-weight: bold;
+          box-shadow: 0 10rpx 30rpx rgba(255, 107, 107, 0.3);
+          text-align: center;
         }
       }
 
@@ -911,25 +1081,26 @@ export default {
         gap: 15rpx;
 
         .tag {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
           color: #fff;
           font-size: 24rpx;
-          padding: 10rpx 25rpx;
-          border-radius: 20rpx;
+          padding: 12rpx 30rpx;
+          border-radius: 25rpx;
+          box-shadow: 0 4rpx 15rpx rgba(255, 107, 107, 0.25);
         }
       }
     }
 
     .report-footer {
-      background: #f8f9fa;
-      padding: 30rpx 40rpx;
+      background: linear-gradient(135deg, #FFF5E4 0%, #FFE4C4 100%);
+      padding: 35rpx 40rpx;
       text-align: center;
-      border-top: 1rpx solid #eee;
+      border-top: 1rpx solid rgba(255, 107, 107, 0.1);
 
       .footer-text {
         display: block;
         font-size: 28rpx;
-        color: #666;
+        color: #A08060;
         font-style: italic;
       }
     }
@@ -941,28 +1112,39 @@ export default {
     gap: 20rpx;
 
     .action-btn {
-      background: #fff;
-      color: #667eea;
+      background: rgba(255, 255, 255, 0.95);
+      color: #FF6B6B;
       font-size: 30rpx;
       font-weight: bold;
-      padding: 30rpx;
-      border-radius: 15rpx;
-      border: none;
-      box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.1);
+      padding: 32rpx;
+      border-radius: 20rpx;
+      border: 2rpx solid rgba(255, 107, 107, 0.3);
+      backdrop-filter: blur(10rpx);
+      box-shadow: 0 6rpx 20rpx rgba(255, 107, 107, 0.15);
+      transition: all 0.3s ease;
+
+      &:active {
+        transform: scale(0.96);
+      }
 
       &.save {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
         color: #fff;
+        border: none;
+        box-shadow: 0 8rpx 25rpx rgba(255, 107, 107, 0.35);
       }
 
       &.share {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #FFA07A 0%, #FFB6C1 100%);
         color: #fff;
+        border: none;
+        box-shadow: 0 8rpx 25rpx rgba(255, 160, 122, 0.35);
       }
 
       &.restart {
-        background: rgba(255, 255, 255, 0.3);
-        color: #fff;
+        background: rgba(255, 255, 255, 0.5);
+        color: #FF6B6B;
+        box-shadow: none;
       }
     }
   }
